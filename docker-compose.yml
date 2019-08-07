@@ -1,0 +1,57 @@
+version: '3'
+services:
+  nginx:
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./nginx
+    ports:
+      - '80:80'
+    networks:
+      sac:
+        aliases:
+          - nginx-server
+    depends_on:
+      - postgres
+      - server
+      - client
+  postgres:
+    image: 'postgres:latest'
+    environment:
+      - POSTGRES_PASSWORD=sac-2019
+    networks:
+      sac:
+        aliases:
+          - postgres
+  server:
+    build:
+      dockerfile: Dockerfile
+      context: ./server
+    environment:
+      - PGHOST=postgres
+      - PGPORT=5432
+      - PGUSER=postgres
+      - PGPASSWORD=sac-2019
+      - PGDATABASE=postgres
+    depends_on:
+      - postgres
+    networks:
+      sac:
+        aliases:
+          - api
+  client:
+    build:
+      dockerfile: Dockerfile
+      context: ./client
+    volumes:
+      - ./client/public:/app/public
+      - ./client/src:/app/src
+    depends_on:
+      - postgres
+      - server
+    networks:
+      sac:
+        aliases:
+          - client
+networks:
+  sac:
