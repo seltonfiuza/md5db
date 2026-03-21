@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 services:
   nginx:
     restart: always
@@ -16,7 +16,7 @@ services:
       - server
       - client
   postgres:
-    image: 'postgres:latest'
+    image: 'postgres:16-alpine'
     environment:
       - POSTGRES_PASSWORD=sac-2019
     networks:
